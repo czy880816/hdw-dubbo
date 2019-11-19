@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<project
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.hdw</groupId>
+        <artifactId>hdw-dubbo</artifactId>
+        <version>3.0.0</version>
+    </parent>
+
+    <groupId>com.hdw</groupId>
+    <artifactId>hdw-base-api</artifactId>
+    <version>${hdw-base-api.version}</version>
+    <packaging>jar</packaging>
+
+    <name>hdw-base-api</name>
+    <url>http://maven.apache.org</url>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>com.hdw</groupId>
+            <artifactId>hdw-base-mapper</artifactId>
+            <version>${hdw-base-mapper.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>

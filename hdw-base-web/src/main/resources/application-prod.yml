@@ -1,0 +1,238 @@
+server:
+  port: 8182
+  servlet:
+    context-path: /
+  tomcat:
+    uri-encoding: UTF-8
+    max-connections: 1000
+    min-spare-threads: 30
+
+spring:
+  application:
+    name: ${project.artifactId}
+  main:
+    allow-bean-definition-overriding: true
+    mvc:
+      throw-exception-if-no-handler-found: false
+    resources:
+      add-mappings: false
+    jackson:
+      date-format: yyy-MM-dd HH:mm:ss
+      time-zone: GMT+8
+    thymeleaf:
+      cache: false
+      encoding: UTF-8
+      mode: LEGACYHTML5
+      prefix: classpath:/templates/
+      suffix: .html
+    servlet:
+      multipart:
+        enabled: true
+        max-file-size: 100MB
+        max-request-size: 100MB
+  datasource:
+    druid:
+      initial-size: 1
+      max-active: 20
+      min-idle: 1
+      max-wait: 60000
+      min-evictable-idle-time-millis: 30000
+      max-evictable-idle-time-millis: 30000
+      time-between-eviction-runs-millis: 60000
+      validation-query: select 'x'
+      validation-query-timeout: -1
+      test-on-borrow: false
+      test-on-return: false
+      test-while-idle: true
+      pool-prepared-statements: true
+      share-prepared-statements: true
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+      filter:
+        stat:
+          log-slow-sql: true
+          slow-sql-millis: 1000
+          merge-sql: true
+        wall:
+          config:
+            multi-statement-allow: true
+      # driver-class-name: com.mysql.cj.jdbc.Driver
+      # url: jdbc:mysql://127.0.0.1:3306/hdw_dubbo?autoReconnect=true&useSSL=false&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+      driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+      url: jdbc:p6spy:mysql://127.0.0.1:3306/hdw_dubbo?autoReconnect=true&useSSL=false&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+      username: root
+      password: 123456
+
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+    password:
+    timeout: 3600ms
+    #    cluster:
+    #      max-redirects: 3
+    #      nodes: 127.0.0.1:7000, 127.0.0.1:7001, 127.0.0.1:7002, 127.0.0.1:7003, 127.0.0.1:7004,127.0.0.1:7005
+    lettuce:
+      pool:
+        max-active: 100
+        max-idle: 100
+        min-idle: 50
+        max-wait: 6000ms
+      shutdown-timeout: 100ms
+
+  activemq:
+    broker-url: tcp://localhost:61616
+    user: admin
+    password: admin
+    in-memory: false
+    pool:
+      enabled: true
+      max-connections: 100
+      idle-timeout: 30s
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+
+  boot:
+    admin:
+      client:
+        url: http://127.0.0.1:8180
+        instance:
+          service-base-url: http://127.0.0.1:${server.port}
+          management-base-url: http://127.0.0.1:${server.port}
+
+mybatis-plus:
+  mapper-locations: classpath*:com/hdw/*/mapper/sqlMapperXml/*Mapper.xml
+  type-aliases-package: com.hdw.*.entity
+  global-config:
+    db-config:
+      id-type: id_worker
+      table-underline: true
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: true
+
+dubbo:
+  application:
+    id: hdw-base-consumer
+    name: ${dubbo.application.id}
+    qos:
+      enable: false
+  protocol:
+    id: dubbo
+    name: dubbo
+    port: -1
+    threadpool: fixed
+    threads: 200
+    payload: 52428800
+  registry:
+    id: hdw-registry
+    address: zookeeper://127.0.0.1:2181
+    file: /output/cache/hdw-base-consumer.cache
+    timeout: 5000
+    session: 60000
+    check: true
+  consumer:
+    id: ${dubbo.application.id}
+    group: hdw-base
+    version: 1.0.0
+    timeout: 60000
+    loadbalance: roundrobin
+    retries: 2
+    actives: 200
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+    dubbo:
+      enable: true
+      dubbo-shutdown.enabled: true
+      dubbo-configs.enabled: true
+      dubbo-services.enabled: true
+      dubbo-references.enabled: true
+      dubbo-properties.enabled: true
+  health:
+    dubbo:
+      status:
+        defaults: memory,load
+        extras: registry,load,threadpool
+
+info:
+  name: 基础平台WEB服务
+  version: 1.0.0
+
+fdfs:
+  file-upload:
+    server: http://127.0.0.1:9090
+  soTimeout: 1500
+  connectTimeout: 600
+  thumbImage:
+    width: 150
+    height: 150
+  trackerList[0]: 127.0.0.1:22122
+
+hdw:
+  # 超时时间
+  expire: 1800
+  # 拦截器配置
+  interceptor:
+    resource:
+      enabled: true
+      include-paths: ${hdw.resource-access-patterns}
+    upload:
+      enabled: true
+      include-paths: /upload/**
+    download:
+      enabled: true
+      include-paths: /download/**
+  # 文件上传下载配置
+  # 上传路径配置
+  file-upload-prefix: D:\\Workspaces\\SSM\src\\hdw-dubbo\\hdw-base-web\\src\main\\resources\\static
+  # 资源访问路径
+  resource-access-path: /static/
+  # 资源访问路径匹配：/static/**
+  resource-access-patterns: ${hdw.resource-access-path}**
+  # 资源访问全路径前缀：http://localhost:9090
+  resource-access-url: http://localhost:${server.port}${server.servlet.context-path}
+  # 全局允许上传的类型
+  allow-upload-file-extensions: gif,jpg,jpeg,bmp,png,jar,doc,docx,xls,xlsx,pdf,txt,rar
+  allow-download-file-extensions: gif,jpg,jpeg,bmp,png,jar,doc,docx,xls,xlsx,pdf,txt,rar
+  shiro:
+    #jwt、cas
+    type: jwt
+    session-prefix: hdw-base-shiro-session-
+    cache-prefix: hdw-base-shiro-cache-
+    cookie-prefix: /hdw-base
+    user-token-prefix: hdw-base-user-token-
+  # 定时任务线程名称前缀
+  scheduler-name: hdw-base-
+  # 分布式锁模式
+  redisson-model: single
+  # swagger配置
+  swagger2:
+    enabled: true
+    description: 基础平台WEB服务
+    title: 基础平台WEB服务
+    version: 1.0
+
+#CAS Config
+cas:
+  prefixUrl: http://127.0.0.1:8443/cas
+  loginUrl: ${cas.prefixUrl}/login
+  logoutUrl: ${cas.prefixUrl}/logout
+  serviceUrl: http://127.0.0.1:${server.port}/
+  callbackUrl: ${cas.serviceUrl}/callback
+  salt: 12345678901234567890123456789012
+  serverUrlPrefix: http://127.0.0.1:8443/cas

@@ -16,10 +16,10 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class RedisServiceImpl implements IRedisService {
 
-    @Resource(name = "redisTemplate")
+    @Resource(name = "jsonRedisTemplate")
     private RedisTemplate<String, Object> redisTemplate;
 
-    @Value("${redis.expire}")
+    @Value("${hdw.expire}")
     private Integer EXPIRE;
 
     @Override
@@ -168,10 +168,10 @@ public class RedisServiceImpl implements IRedisService {
 
     @Override
     public Map<String, Object> mget(String key) {
-        Map<Object, Object> resultMap = redisTemplate.opsForHash().entries(key);
+        Map<Object, Object> CommonResult = redisTemplate.opsForHash().entries(key);
         Map<String, Object> map = new HashMap<String, Object>();
-        for (Object obj : resultMap.keySet()) {
-            map.put(obj.toString(), resultMap.get(obj));
+        for (Object obj : CommonResult.keySet()) {
+            map.put(obj.toString(), CommonResult.get(obj));
         }
         return map;
     }

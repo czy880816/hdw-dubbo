@@ -1,33 +1,33 @@
 package com.hdw.common.result;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.hdw.common.util.JacksonUtils;
+import com.hdw.common.utils.JacksonUtils;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.util.List;
 
 /**
- * @Description vue select 插件的节点
- * @Author ChenShi
+ * @Description vue select选择器对象
+ * @Author TuMinglong
  * @Date 2018/6/20 10:38
  */
+@ApiModel("vue select选择器对象")
 public class SelectNode implements Serializable {
-
-    /**
-     *
-     */
-    private static final long serialVersionUID = 1L;
-
     /**
      * value
      */
+    @ApiModelProperty("key")
     private String value;
 
     /**
      * label
      */
+    @ApiModelProperty("value")
     private String label;
 
+    @ApiModelProperty("对象List")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<SelectNode> options;
 

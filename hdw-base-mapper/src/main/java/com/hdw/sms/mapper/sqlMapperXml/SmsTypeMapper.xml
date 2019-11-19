@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hdw.sms.mapper.SmsTypeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseCommonResult" type="com.hdw.sms.entity.SmsType">
+        <result column="id" property="id"/>
+        <result column="type_name" property="typeName"/>
+        <result column="target_list" property="targetList"/>
+        <result column="is_send_sms" property="isSendSms"/>
+        <result column="is_send_email" property="isSendEmail"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_user" property="createUser"/>
+        <result column="update_user" property="updateUser"/>
+    </resultMap>
+
+    <!-- 表名 -->
+    <sql id="t_name">t_sys_sms_type</sql>
+    <!-- 别名 -->
+    <sql id="t_alias">t_sys_sms_type as t</sql>
+
+</mapper>

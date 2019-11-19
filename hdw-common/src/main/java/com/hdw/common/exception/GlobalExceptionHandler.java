@@ -1,241 +1,242 @@
 package com.hdw.common.exception;
 
-import com.hdw.common.result.ResultMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.ConversionNotSupportedException;
-import org.springframework.beans.TypeMismatchException;
+import com.alibaba.fastjson.JSON;
+import com.hdw.common.constants.ErrorCode;
+import com.hdw.common.result.CommonResult;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.validation.BindException;
-import org.springframework.web.HttpMediaTypeNotAcceptableException;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.MissingServletRequestParameterException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import java.io.IOException;
+import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @Description 全局异常拦截处理器
- * @Author TuMinglong
- * @Date 2018/12/10 14:01
+ * @Author TuMingLong
+ * @Date 2019/11/4 14:06
  */
-@ControllerAdvice
-//@RestControllerAdvice
+@Slf4j
+//@ControllerAdvice
+@RestControllerAdvice
 @ResponseBody
 public class GlobalExceptionHandler {
-
-    private Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * 处理自定义异常
      */
     @ExceptionHandler(GlobalException.class)
-    public ResultMap handleGlobalException(GlobalException e){
-        ResultMap r = new ResultMap();
-        r.put("code", e.getCode());
-        r.put("msg", e.getMessage());
-        return r;
+    @ResponseStatus(HttpStatus.OK)
+    public CommonResult handleGlobalException(GlobalException exception) {
+        log.error("GlobalException: {}", exception);
+        int errorCode;
+        if (exception instanceof BusinessException) {
+            errorCode = ErrorCode.BUSINESS_EXCEPTION.getCode();
+        } else if (exception instanceof DaoException) {
+            errorCode = ErrorCode.DAO_EXCEPTION.getCode();
+        } else {
+            errorCode = ErrorCode.SYSTEM_HANDLE_EXCEPTION.getCode();
+        }
+        CommonResult resultBody = CommonResult.fail()
+                .code(errorCode)
+                .msg(exception.getMessage());
+        return resultBody;
     }
 
-    @ExceptionHandler(NoHandlerFoundException.class)
-    public ResultMap handlerNoFoundException(Exception e) {
-        logger.error(e.getMessage(), e);
-        return ResultMap.error(404, "路径不存在，请检查路径是否正确");
+    /**
+     * 登陆授权异常处理
+     *
+     * @param exception
+     * @return
+     */
+    @ExceptionHandler(value = SysLoginException.class)
+    @ResponseStatus(HttpStatus.OK)
+    public CommonResult sysLoginExceptionHandler(SysLoginException exception) {
+        log.error("SysLoginException: {}", exception);
+        CommonResult r = new CommonResult();
+        CommonResult resultBody = CommonResult.fail()
+                .code(ErrorCode.UNAUTHORIZED.getCode())
+                .msg(exception.getMessage());
+        return resultBody;
     }
 
-    @ExceptionHandler(DuplicateKeyException.class)
-    public ResultMap handleDuplicateKeyException(DuplicateKeyException e){
-        logger.error(e.getMessage(), e);
-        return ResultMap.error("数据库中已存在该记录");
-    }
-
+    /**
+     * 默认的异常处理
+     *
+     * @param exception
+     * @return
+     */
     @ExceptionHandler(Exception.class)
-    public ResultMap handleException(Exception e){
-        logger.error(e.getMessage(), e);
-        return ResultMap.error();
+    public CommonResult handleException(Exception exception) {
+        log.error("exception: {}", exception);
+        CommonResult resultBody = CommonResult.fail()
+                .code(ErrorCode.SYSTEM_EXCEPTION.getCode())
+                .msg(exception.getMessage());
+        return resultBody;
     }
 
-    /**
-     * 运行异常
-     * @param e
-     * @return
-     */
-    @ExceptionHandler(value = RuntimeException.class)
-    public ResultMap handleGlobalException(RuntimeException e) {
-        logger.error(e.getMessage(), e);
-        return ResultMap.error(500, "运行异常");
-    }
 
     /**
-     * 空指针异常
-     * @param e
-     * @return
-     */
-    @ExceptionHandler(NullPointerException.class)
-    public ResultMap handlerNullPointerException(NullPointerException e) {
-        logger.error(e.getMessage(), e);
-        return ResultMap.error(500, "空指针异常");
-    }
-
-    /**
-     * 类型转换异常
-     * @param e
-     * @return
-     */
-    @ExceptionHandler(ClassCastException.class)
-    public ResultMap handlerClassCastException(ClassCastException e) {
-        logger.error(e.getMessage(), e);
-        return ResultMap.error(500, "类型转换异常");
-    }
-
-    /**
-     * IO异常
-     * @param e
-     * @return
-     */
-    @ExceptionHandler(IOException.class)
-    public ResultMap handlerIOException(IOException e) {
-        logger.error(e.getMessage(), e);
-        return ResultMap.error(500, "IO异常");
-    }
-
-    /**
-     * 未知方法异常
-     * @param e
-     * @return
-     */
-    @ExceptionHandler(NoSuchMethodException.class)
-    public ResultMap handlerNoSuchMethodException(NoSuchMethodException e) {
-        logger.error(e.getMessage(), e);
-        return ResultMap.error(500, "未知方法异常");
-    }
-
-    /**
-     * 数组越界异常
-     * @param e
-     * @return
-     */
-    @ExceptionHandler(IndexOutOfBoundsException.class)
-    public ResultMap handlerIndexOutOfBoundsException(IndexOutOfBoundsException e) {
-        logger.error(e.getMessage(), e);
-        return ResultMap.error(500, "数组越界异常");
-    }
-
-    /**
-     * 400错误
-     * @param e
-     * @return
-     */
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResultMap handlerRequestNotReadable(HttpMessageNotReadableException e) {
-        logger.error(e.getMessage(), e);
-        return ResultMap.error(400, "http消息不可读异常");
-    }
-
-    /**
-     * 类型匹配异常
-     * @param e
-     * @return
-     */
-    @ExceptionHandler(TypeMismatchException.class)
-    public ResultMap handlerRequestTypeMismatch(TypeMismatchException e) {
-        logger.error(e.getMessage(), e);
-        return ResultMap.error(400, "类型匹配异常");
-    }
-
-    /**
-     * 错误服务请求参数异常
-     * @param e
-     * @return
-     */
-    @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResultMap handlerRequestMissingServletRequest(MissingServletRequestParameterException e) {
-        logger.error(e.getMessage(), e);
-        return ResultMap.error(400, "错误服务请求参数异常");
-    }
-
-    /**
-     *不支持的request请求异常
-     * @param e
-     * @return
-     */
-    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResultMap handlerRequest405(HttpRequestMethodNotSupportedException e) {
-        logger.error(e.getMessage(), e);
-        return ResultMap.error(405, "不支持的request方法请求异常");
-    }
-
-    /**
-     * 不可接受的HTTP协议异常
-     * @param e
-     * @return
-     */
-    @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
-    public ResultMap handlerRequest406(HttpMediaTypeNotAcceptableException e) {
-        logger.error(e.getMessage(), e);
-        return ResultMap.error(406, "不可接受的HTTP协议异常");
-    }
-
-    /**
-     * 转换不支持异常
-     * @param e
-     * @return
-     */
-    @ExceptionHandler({ConversionNotSupportedException.class, HttpMessageNotWritableException.class})
-    public ResultMap handlerServer500(RuntimeException e) {
-        logger.error(e.getMessage(), e);
-        return ResultMap.error(500, "转换不支持异常");
-    }
-
-    /**
-     * 栈溢出异常
-     * @param e
-     * @return
-     */
-    @ExceptionHandler(StackOverflowError.class)
-    public ResultMap handlerRequestStackOverflow(StackOverflowError e) {
-        logger.error(e.getMessage(), e);
-        return ResultMap.error(500, "栈溢出异常");
-    }
-
-    /**
-     * hibernate validator异常
-     * @param e
+     * 非法参数验证异常
+     *
+     * @param ex
      * @return
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResultMap handlerMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        logger.error(e.getMessage(), e);
-        return ResultMap.error(500, "hibernate validator异常");
+    @ResponseStatus(value = HttpStatus.OK)
+    public CommonResult handleMethodArgumentNotValidExceptionHandler(MethodArgumentNotValidException ex) {
+        log.error("MethodArgumentNotValidException：{}" + ex);
+        BindingResult bindingResult = ex.getBindingResult();
+        List<String> list = new ArrayList<>();
+        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+        for (FieldError fieldError : fieldErrors) {
+            list.add(fieldError.getDefaultMessage());
+        }
+        Collections.sort(list);
+        log.error("fieldErrors：{}" + JSON.toJSONString(list));
+
+        CommonResult resultBody = CommonResult.fail()
+                .code(ErrorCode.PARAMETER_EXCEPTION.getCode())
+                .msg(JSON.toJSONString(list));
+        return resultBody;
+    }
+
+    /**
+     * HTTP解析请求参数异常
+     *
+     * @param exception
+     * @return
+     */
+    @ExceptionHandler(value = HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.OK)
+    public CommonResult httpMessageNotReadableException(HttpMessageNotReadableException exception) {
+        log.error("httpMessageNotReadableException: {}", exception);
+        CommonResult resultBody = CommonResult.fail()
+                .code(ErrorCode.PARAMETER_EXCEPTION.getCode())
+                .msg(ErrorCode.PARAMETER_EXCEPTION.getMsg());
+        return resultBody;
+    }
+
+    /**
+     * ValidationException
+     */
+    @ExceptionHandler(ValidationException.class)
+    @ResponseStatus(HttpStatus.OK)
+    public CommonResult handleValidationException(ValidationException exception) {
+        log.error("ValidationException: {}", exception);
+        CommonResult resultBody = CommonResult.fail()
+                .code(ErrorCode.VALIDATION_EXCEPTION.getCode())
+                .msg(exception.getCause().getMessage());
+        return resultBody;
+    }
+
+    /**
+     * HTTP
+     *
+     * @param exception
+     * @return
+     */
+    @ExceptionHandler(value = HttpMediaTypeException.class)
+    @ResponseStatus(HttpStatus.OK)
+    public CommonResult httpMediaTypeException(HttpMediaTypeException exception) {
+        log.error("httpMediaTypeException: {}", exception);
+        CommonResult resultBody = CommonResult.fail()
+                .code(ErrorCode.HTTP_MEDIA_TYPE_EXCEPTION.getCode())
+                .msg(ErrorCode.HTTP_MEDIA_TYPE_EXCEPTION.getMsg());
+        return resultBody;
+    }
+
+    /**
+     * 约束异常
+     *
+     * @param exception
+     * @return
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.OK)
+    public CommonResult handleConstraintViolationException(ConstraintViolationException exception) {
+        log.error("ConstraintViolationException: {}", exception);
+        CommonResult resultBody = CommonResult.fail()
+                .code(ErrorCode.CONSTRAINT_VIOLATION_EXCEPTION.getCode())
+                .msg(ErrorCode.CONSTRAINT_VIOLATION_EXCEPTION.getMsg());
+        return resultBody;
+    }
+
+    /**
+     * 路径不存在，请检查路径是否正确
+     *
+     * @param exception
+     * @return
+     */
+    @ExceptionHandler(NoHandlerFoundException.class)
+    @ResponseStatus(HttpStatus.OK)
+    public CommonResult handlerNoFoundException(NoHandlerFoundException exception) {
+        log.error("NoHandlerFoundException: {}", exception);
+        CommonResult resultBody = CommonResult.fail()
+                .code(ErrorCode.NO_HANDLER_FOUND_EXCEPTION.getCode())
+                .msg(ErrorCode.NO_HANDLER_FOUND_EXCEPTION.getMsg());
+        return resultBody;
+    }
+
+    /**
+     * 数据重复，请检查后提交
+     *
+     * @param exception
+     * @return
+     */
+    @ExceptionHandler(DuplicateKeyException.class)
+    @ResponseStatus(HttpStatus.OK)
+    public CommonResult handleDuplicateKeyException(DuplicateKeyException exception) {
+        log.error("DuplicateKeyException: {}", exception);
+        CommonResult resultBody = CommonResult.fail()
+                .code(ErrorCode.DUPLICATE_KEY_EXCEPTION.getCode())
+                .msg(ErrorCode.DUPLICATE_KEY_EXCEPTION.getMsg());
+        return resultBody;
     }
 
     /**
      * 数据绑定异常
-     * @param e
+     *
+     * @param exception
      * @return
      */
     @ExceptionHandler(BindException.class)
-    public ResultMap bindExceptionHandler(BindException e) {
-        logger.error(e.getMessage(), e);
-        return ResultMap.error(500, "数据绑定异常");
+    @ResponseStatus(HttpStatus.OK)
+    public CommonResult handleBindException(BindException exception) {
+        log.error("BindException: {}", exception);
+        CommonResult resultBody = CommonResult.fail()
+                .code(ErrorCode.BIND_EXCEPTION.getCode())
+                .msg(ErrorCode.BIND_EXCEPTION.getMsg());
+        return resultBody;
     }
 
     /**
-     * 超过最大上传数量异常
-     * @param e
+     * 超过最大上传数据
+     *
+     * @param exception
      * @return
      */
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public ResultMap maxUploadSizeExceededExceptionHandler(MaxUploadSizeExceededException e) {
-        logger.error(e.getMessage(), e);
-        return ResultMap.error(500, "超过最大上传数量异常");
+    @ResponseStatus(HttpStatus.OK)
+    public CommonResult handleMaxUploadSizeExceededException(MaxUploadSizeExceededException exception) {
+        log.error("MaxUploadSizeExceededException: {}", exception);
+        CommonResult resultBody = CommonResult.fail()
+                .code(ErrorCode.MAX_UPLOAD_SIZE_EXCEEDED_EXCEPTION.getCode())
+                .msg(ErrorCode.MAX_UPLOAD_SIZE_EXCEEDED_EXCEPTION.getMsg());
+        return resultBody;
     }
-
 }

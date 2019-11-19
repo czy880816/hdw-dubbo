@@ -2,6 +2,7 @@ package com.hdw.common.result;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.hdw.common.constants.CommonEnum;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class MenuNode implements Comparable, Serializable {
     /**
      * 父节点
      */
-    private Long pid;
+    private Long parentId;
 
     /**
      * 节点名称
@@ -42,7 +43,7 @@ public class MenuNode implements Comparable, Serializable {
      * 是否菜单（0-是，1-否）
      */
     @JsonInclude(Include.NON_NULL)
-    private Integer ismenu;
+    private Integer isMenu;
 
     /**
      * 状态（0-正常，1-关闭）
@@ -81,38 +82,10 @@ public class MenuNode implements Comparable, Serializable {
         super();
     }
 
-    public MenuNode(Long id, Long pid) {
+    public MenuNode(Long id, Long parentId) {
         super();
         this.id = id;
-        this.pid = pid;
-    }
-
-    public static MenuNode createRoot() {
-        return new MenuNode(0L, -1L);
-    }
-
-    public Integer getLevels() {
-        return levels;
-    }
-
-    public void setLevels(Integer levels) {
-        this.levels = levels;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
+        this.parentId = parentId;
     }
 
     public Long getId() {
@@ -123,12 +96,12 @@ public class MenuNode implements Comparable, Serializable {
         this.id = id;
     }
 
-    public Long getPid() {
-        return pid;
+    public Long getParentId() {
+        return parentId;
     }
 
-    public void setPid(Long pid) {
-        this.pid = pid;
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
     }
 
     public String getName() {
@@ -139,20 +112,28 @@ public class MenuNode implements Comparable, Serializable {
         this.name = name;
     }
 
-    public String getUrl() {
-        return url;
+    public Integer getLevels() {
+        return levels;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setLevels(Integer levels) {
+        this.levels = levels;
     }
 
-    public List<MenuNode> getChildren() {
-        return children;
+    public Integer getIsMenu() {
+        return isMenu;
     }
 
-    public void setChildren(List<MenuNode> children) {
-        this.children = children;
+    public void setIsMenu(Integer isMenu) {
+        this.isMenu = isMenu;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public Integer getNum() {
@@ -163,27 +144,49 @@ public class MenuNode implements Comparable, Serializable {
         this.num = num;
     }
 
-    public Integer getIsmenu() {
-        return ismenu;
+    public String getUrl() {
+        return url;
     }
 
-    public void setIsmenu(Integer ismenu) {
-        this.ismenu = ismenu;
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public List<MenuNode> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<MenuNode> children) {
+        this.children = children;
     }
 
     @Override
     public String toString() {
         return "MenuNode{" +
                 "id=" + id +
-                ", pid=" + pid +
+                ", parentId=" + parentId +
                 ", name='" + name + '\'' +
                 ", levels=" + levels +
+                ", isMenu=" + isMenu +
+                ", status=" + status +
                 ", num=" + num +
                 ", url='" + url + '\'' +
                 ", icon='" + icon + '\'' +
                 ", children=" + children +
                 ", linkedList=" + linkedList +
                 '}';
+    }
+
+    public static MenuNode createRoot() {
+        return new MenuNode(0L, -1L);
     }
 
     @Override
@@ -223,7 +226,7 @@ public class MenuNode implements Comparable, Serializable {
         for (Iterator<MenuNode> iterator = nodeList.iterator(); iterator.hasNext(); ) {
             MenuNode node = (MenuNode) iterator.next();
             // 根据传入的某个父节点ID,遍历该父节点的所有子节点
-            if (node.getPid() != 0 && pid.equals(node.getPid())) {
+            if (node.getParentId() != 0 && pid.equals(node.getParentId())) {
                 recursionFn(nodeList, node, pid);
             }
         }
@@ -240,7 +243,7 @@ public class MenuNode implements Comparable, Serializable {
     public void recursionFn(List<MenuNode> nodeList, MenuNode node, Long pId) {
         List<MenuNode> childList = getChildList(nodeList, node);// 得到子节点列表
         if (childList.size() > 0) {// 判断是否有子节点
-            if (node.getPid().equals(pId)) {
+            if (node.getParentId().equals(pId)) {
                 linkedList.add(node);
             }
             Iterator<MenuNode> it = childList.iterator();
@@ -249,7 +252,7 @@ public class MenuNode implements Comparable, Serializable {
                 recursionFn(nodeList, n, pId);
             }
         } else {
-            if (node.getPid().equals(pId)) {
+            if (node.getParentId().equals(pId)) {
                 linkedList.add(node);
             }
         }
@@ -268,7 +271,7 @@ public class MenuNode implements Comparable, Serializable {
         Iterator<MenuNode> it = list.iterator();
         while (it.hasNext()) {
             MenuNode n = (MenuNode) it.next();
-            if (n.getPid().equals(node.getId())) {
+            if (n.getParentId().equals(node.getId())) {
                 nodeList.add(n);
             }
         }
@@ -284,7 +287,7 @@ public class MenuNode implements Comparable, Serializable {
     public static List<MenuNode> clearBtn(List<MenuNode> nodes) {
         ArrayList<MenuNode> noBtns = new ArrayList<MenuNode>();
         for (MenuNode node : nodes) {
-            if (node.getIsmenu() == IsMenu.YES.getCode()) {
+            if (node.getIsMenu() == CommonEnum.YES.getCode()) {
                 noBtns.add(node);
             }
         }
@@ -313,7 +316,6 @@ public class MenuNode implements Comparable, Serializable {
      *
      * @date 2017年2月19日 下午11:18:19
      */
-    @SuppressWarnings("unchecked")
     public static List<MenuNode> buildTitle(List<MenuNode> nodes) {
 
         List<MenuNode> clearBtn = clearBtn(nodes);

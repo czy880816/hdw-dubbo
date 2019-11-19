@@ -6,400 +6,99 @@
 
     <groupId>com.hdw</groupId>
     <artifactId>hdw-dubbo</artifactId>
-    <version>1.2.0</version>
+    <version>3.0.0</version>
     <packaging>pom</packaging>
-
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.1.RELEASE</version>
-    </parent>
 
     <modules>
         <module>hdw-common</module>
         <module>hdw-monitor</module>
-        <module>hdw-upms-mapper</module>
-        <module>hdw-upms-api</module>
-        <module>hdw-upms-service</module>
-        <module>hdw-upms-web</module>
+        <module>hdw-base-mapper</module>
+        <module>hdw-base-api</module>
+        <module>hdw-base-service</module>
+        <module>hdw-base-web</module>
+        <module>hdw-generator</module>
     </modules>
 
     <properties>
+        <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
+        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+        <maven-compiler-plugin.version>3.6.2</maven-compiler-plugin.version>
+        <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
+        <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
+        <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
+        <maven-assembly-plugin.version>3.1.0</maven-assembly-plugin.version>
 
-        <!-- druid -->
-        <druid-spring-boot-starter.version>1.1.10</druid-spring-boot-starter.version>
-        <mybatis-plus-boot-starter.version>3.0.6</mybatis-plus-boot-starter.version>
-        <dynamic-datasource-spring-boot-starter.version>2.4.2</dynamic-datasource-spring-boot-starter.version>
-        <!-- dubbo -->
-        <dubbo.version>2.6.2</dubbo.version>
-        <dubbo-spring-boot-starter.version>0.2.0</dubbo-spring-boot-starter.version>
+        <spring-cloud.version>Greenwich.SR3</spring-cloud.version>
+        <spring-boot.version>2.2.0.RELEASE</spring-boot.version>
+        <spring-boot-admin.version>2.1.6</spring-boot-admin.version>
+        <alibaba.cloud.version>2.1.0.RELEASE</alibaba.cloud.version>
+        <alibaba.fastjson.version>1.2.62</alibaba.fastjson.version>
+        <alibaba.druid.version>1.1.20</alibaba.druid.version>
+        <dubbo.version>2.7.4.1</dubbo.version>
 
-        <!-- jackson -->
-        <jackson.version>2.9.7</jackson.version>
-        <!-- fastjson -->
-        <fastjson.version>1.2.54</fastjson.version>
-
-        <joda-time.version>2.10.1</joda-time.version>
-
-        <httpclient.version>4.5.3</httpclient.version>
-        <!-- commons-io -->
-        <commons-lang3.version>3.1</commons-lang3.version>
-        <commons-fileupload.version>1.3</commons-fileupload.version>
-        <commons-codec.version>1.9</commons-codec.version>
-        <commons-collections.version>3.2.2</commons-collections.version>
-        <commons-beanutils.version>1.9.3</commons-beanutils.version>
-        <commons-net.version>3.6</commons-net.version>
-        <commons-pool2.version>2.5.0</commons-pool2.version>
-        <!-- pinyin4j -->
+        <apache.commons-lang3.version>3.9</apache.commons-lang3.version>
+        <apache.commons-io.version>2.6</apache.commons-io.version>
+        <apache.commons-beanutils.version>1.9.4</apache.commons-beanutils.version>
+        <apache.commons-codec.version>1.13</apache.commons-codec.version>
+        <apache.commons-collections4.version>4.4</apache.commons-collections4.version>
+        <apache.commons-fileupload.version>1.4</apache.commons-fileupload.version>
+        <apache.commons-text.version>1.8</apache.commons-text.version>
+        <apache.commons-configuration.version>1.10</apache.commons-configuration.version>
+        <httpclient.version>4.5.10</httpclient.version>
         <pinyin4j.version>2.5.1</pinyin4j.version>
-        <!-- zxing -->
-        <zxing.core.version>3.3.1</zxing.core.version>
-        <!-- dom4j -->
-        <dom4j.version>1.6.1</dom4j.version>
-
-        <poi.version>4.0.1</poi.version>
-        <!-- pdfbox -->
-        <pdfbox.version>2.0.13</pdfbox.version>
-        <!-- hutool -->
-        <hutool.version>4.3.1</hutool.version>
-        <!-- guava -->
-        <guava.version>20.0</guava.version>
-
+        <com.google.zxing.version>3.4.0</com.google.zxing.version>
+        <hutool.version>5.0.0</hutool.version>
+        <poi.version>4.1.1</poi.version>
+        <pdfbox.version>2.0.17</pdfbox.version>
         <fastdfs-spring-boot-starter.version>0.2.0</fastdfs-spring-boot-starter.version>
-        <springfox.swagger2.version>2.9.2</springfox.swagger2.version>
-        <lombok.version>1.18.4</lombok.version>
-
-        <springboot-admin.version>2.1.1</springboot-admin.version>
-
-        <jjwt.version>0.9.1</jjwt.version>
-        <shiro.version>1.4.0</shiro.version>
-        <pac4j.version>3.4.0</pac4j.version>
-        <buji.version>4.0.0</buji.version>
-
-        <!-- thymeleaf -->
-        <thymeleaf.version>3.0.11.RELEASE</thymeleaf.version>
-        <thymeleaf-layout-dialect.version>2.3.0</thymeleaf-layout-dialect.version>
+        <swagger2.version>2.9.2</swagger2.version>
+        <swagger-bootstrap-ui.version>1.9.6</swagger-bootstrap-ui.version>
+        <mybatis-plus.version>3.2.0</mybatis-plus.version>
+        <dynamic-datasource-spring-boot-starter.version>2.5.7</dynamic-datasource-spring-boot-starter.version>
+        <p6spy.version>3.8.6</p6spy.version>
+        <oracle.version>10.2.0.4.0</oracle.version>
+        <shiro.version>1.4.1</shiro.version>
+        <jwt.version>3.8.3</jwt.version>
+        <pac4j.version>3.8.2</pac4j.version>
+        <buji.version>4.1.1</buji.version>
+        <thymeleaf-layout-dialect.version>2.4.1</thymeleaf-layout-dialect.version>
         <thymeleaf-extras-shiro.version>2.0.0</thymeleaf-extras-shiro.version>
+        <jsoup.version>1.12.1</jsoup.version>
+        <netty-all.version>4.1.42.Final</netty-all.version>
+
+        <hdw-common.version>3.0.0</hdw-common.version>
+        <hdw-base-mapper.version>3.0.0</hdw-base-mapper.version>
+        <hdw-base-api.version>3.0.0</hdw-base-api.version>
+
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <!-- 时间操作组件 begin -->
             <dependency>
-                <groupId>joda-time</groupId>
-                <artifactId>joda-time</artifactId>
-                <version>${joda-time.version}</version>
-            </dependency>
-            <!-- 时间操作组件 end -->
-
-            <!-- httpclient begin -->
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient</artifactId>
-                <version>${httpclient.version}</version>
-            </dependency>
-            <!-- httpclient end -->
-
-            <!-- jackson begin -->
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.jaxrs</groupId>
-                <artifactId>jackson-jaxrs-json-provider</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.dataformat</groupId>
-                <artifactId>jackson-dataformat-yaml</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.sf.json-lib</groupId>
-                <artifactId>json-lib</artifactId>
-                <version>2.4</version>
-                <classifier>jdk15</classifier>
-            </dependency>
-            <!-- jackson end -->
-
-            <!-- fastjson begin -->
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>fastjson</artifactId>
-                <version>${fastjson.version}</version>
-            </dependency>
-            <!-- fastjson end -->
-
-            <!-- apache.commons begin -->
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>${commons-lang3.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-fileupload</groupId>
-                <artifactId>commons-fileupload</artifactId>
-                <version>${commons-fileupload.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-codec</groupId>
-                <artifactId>commons-codec</artifactId>
-                <version>${commons-codec.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-beanutils</groupId>
-                <artifactId>commons-beanutils</artifactId>
-                <version>${commons-beanutils.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-collections</groupId>
-                <artifactId>commons-collections</artifactId>
-                <version>${commons-collections.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-net</groupId>
-                <artifactId>commons-net</artifactId>
-                <version>${commons-net.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-pool2</artifactId>
-                <version>${commons-pool2.version}</version>
-            </dependency>
-            <!-- apache.commons end -->
-
-            <!-- pinyin4j begin -->
-            <dependency>
-                <groupId>com.belerweb</groupId>
-                <artifactId>pinyin4j</artifactId>
-                <version>${pinyin4j.version}</version>
-            </dependency>
-            <!-- pinyin4j end -->
-
-            <!-- zxing begin -->
-            <dependency>
-                <groupId>com.google.zxing</groupId>
-                <artifactId>core</artifactId>
-                <version>${zxing.core.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.zxing</groupId>
-                <artifactId>javase</artifactId>
-                <version>${zxing.core.version}</version>
-            </dependency>
-            <!-- zxing end -->
-
-            <!-- dom4j begin-->
-            <dependency>
-                <groupId>dom4j</groupId>
-                <artifactId>dom4j</artifactId>
-                <version>${dom4j.version}</version>
-            </dependency>
-            <!-- dom4j end -->
-
-            <!-- excel begin -->
-            <dependency>
-                <groupId>org.apache.poi</groupId>
-                <artifactId>poi</artifactId>
-                <version>${poi.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.poi</groupId>
-                <artifactId>poi-examples</artifactId>
-                <version>${poi.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.poi</groupId>
-                <artifactId>poi-excelant</artifactId>
-                <version>${poi.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.poi</groupId>
-                <artifactId>poi-ooxml</artifactId>
-                <version>${poi.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.poi</groupId>
-                <artifactId>poi-ooxml-schemas</artifactId>
-                <version>${poi.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.poi</groupId>
-                <artifactId>poi-scratchpad</artifactId>
-                <version>${poi.version}</version>
-            </dependency>
-            <!-- excel end -->
-
-            <!-- pdfbox begin -->
-            <dependency>
-                <groupId>org.apache.pdfbox</groupId>
-                <artifactId>pdfbox</artifactId>
-                <version>${pdfbox.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.pdfbox</groupId>
-                <artifactId>fontbox</artifactId>
-                <version>${pdfbox.version}</version>
-            </dependency>
-            <!-- pdfbox end -->
-
-            <!-- hutool begin -->
-            <dependency>
-                <groupId>cn.hutool</groupId>
-                <artifactId>hutool-all</artifactId>
-                <version>${hutool.version}</version>
-            </dependency>
-            <!-- hutool end -->
-
-            <!-- mybatis-plus begin -->
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>druid-spring-boot-starter</artifactId>
-                <version>${druid-spring-boot-starter.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-boot-starter</artifactId>
-                <version>${mybatis-plus-boot-starter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
-                <version>${dynamic-datasource-spring-boot-starter.version}</version>
-            </dependency>
-            <!-- mybatis-plus end -->
-
-            <!-- dubbo begin -->
-            <dependency>
-                <groupId>com.alibaba.boot</groupId>
-                <artifactId>dubbo-spring-boot-starter</artifactId>
-                <version>${dubbo-spring-boot-starter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba.boot</groupId>
-                <artifactId>dubbo-spring-boot-actuator</artifactId>
-                <version>${dubbo-spring-boot-starter.version}</version>
-            </dependency>
-            <!-- dubbo end -->
-
-            <!-- fastdfs -->
-            <dependency>
-                <groupId>com.luhuiguo</groupId>
-                <artifactId>fastdfs-spring-boot-starter</artifactId>
-                <version>${fastdfs-spring-boot-starter.version}</version>
-            </dependency>
-
-            <!-- swagger2 -->
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger2</artifactId>
-                <version>${springfox.swagger2.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger-ui</artifactId>
-                <version>${springfox.swagger2.version}</version>
-            </dependency>
-
-            <!-- lombok -->
-            <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>${lombok.version}</version>
-                <scope>compile</scope>
-            </dependency>
-
-            <!-- 验证码框架 begin -->
-            <dependency>
-                <groupId>com.github.penggle</groupId>
-                <artifactId>kaptcha</artifactId>
-                <version>2.3.2</version>
-            </dependency>
-            <!-- 验证码框架 end -->
-
-            <!-- shiro begin -->
-            <dependency>
-                <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-spring</artifactId>
-                <version>${shiro.version}</version>
-            </dependency>
-            <!-- shiro end -->
-
-            <!-- thymeleaf-extras-shiro begin -->
-            <dependency>
-                <groupId>com.github.theborakompanioni</groupId>
-                <artifactId>thymeleaf-extras-shiro</artifactId>
-                <version>${thymeleaf-extras-shiro.version}</version>
-            </dependency>
-            <!-- thymeleaf-extras-shiro end -->
-
-            <!-- pac4j -->
-            <dependency>
-                <groupId>io.buji</groupId>
-                <artifactId>buji-pac4j</artifactId>
-                <version>${buji.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.pac4j</groupId>
-                <artifactId>pac4j-core</artifactId>
-                <version>${pac4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.pac4j</groupId>
-                <artifactId>pac4j-cas</artifactId>
-                <version>${pac4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.pac4j</groupId>
-                <artifactId>pac4j-jwt</artifactId>
-                <version>${pac4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.pac4j</groupId>
-                <artifactId>pac4j-http</artifactId>
-                <version>${pac4j.version}</version>
-            </dependency>
-            <!-- pac4j end -->
-
-            <!-- spring-boot-admin begin -->
-            <dependency>
-                <groupId>de.codecentric</groupId>
-                <artifactId>spring-boot-admin-server</artifactId>
-                <version>${springboot-admin.version}</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>de.codecentric</groupId>
-                <artifactId>spring-boot-admin-server-ui</artifactId>
-                <version>${springboot-admin.version}</version>
+                <artifactId>spring-boot-admin-dependencies</artifactId>
+                <version>${spring-boot-admin.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>de.codecentric</groupId>
-                <artifactId>spring-boot-admin-starter-client</artifactId>
-                <version>${springboot-admin.version}</version>
+                <groupId>org.apache.dubbo</groupId>
+                <artifactId>dubbo-dependencies-bom</artifactId>
+                <version>${dubbo.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
-            <!-- spring-boot-admin end -->
-
-            <!-- ueditor begin -->
-            <dependency>
-                <groupId>org.json</groupId>
-                <artifactId>json</artifactId>
-                <version>20180130</version>
-            </dependency>
-            <!-- ueditor end -->
         </dependencies>
     </dependencyManagement>
-
 
     <repositories>
         <repository>
@@ -450,38 +149,39 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <includes>
-                    <include>application.properties</include>
-                    <include>application-${profileActive}.properties</include>
+                    <include>**/*</include>
                     <include>application.yml</include>
                     <include>application-${profileActive}.yml</include>
                 </includes>
                 <filtering>true</filtering>
             </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <include>**/*.xml</include>
-                    <include>**/*.json</include>
-                    <include>static/**</include>
-                    <include>static/fonts/**</include>
-                    <include>templates/**</include>
-                    <include>quartz.properties</include>
-                </includes>
-                <filtering>false</filtering>
-            </resource>
         </resources>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                    <configuration>
-                        <!--fork : 如果没有该项配置，devtools不会起作用，即应用不会restart -->
-                        <fork>true</fork>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${maven.compiler.encoding}</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <!--打包跳过测试-->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>
 

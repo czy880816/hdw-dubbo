@@ -1,10 +1,11 @@
 package com.hdw.common.validator.group;
 
+import javax.validation.groups.Default;
+
 /**
  * @Description 更新数据 Group
- * @Author TuMinglong
- * @Date 2018/12/13 10:37
+ * @Author TuMingLong
+ * @Date 2019/11/4 11:24
  */
-public interface UpdateGroup {
-
+public interface UpdateGroup extends Default {
 }

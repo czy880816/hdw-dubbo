@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hdw.sms.mapper.SysSmsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseCommonResult" type="com.hdw.sms.entity.SysSms">
+        <result column="id" property="id"/>
+        <result column="sms_type_id" property="smsTypeId"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="sms_time" property="smsTime"/>
+        <result column="sms_count" property="smsCount"/>
+        <result column="interval_time" property="intervalTime"/>
+        <result column="status" property="status"/>
+        <result column="real_time" property="realTime"/>
+        <result column="real_count" property="realCount"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_user" property="createUser"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="type_name" property="typeName"/>
+    </resultMap>
+
+
+    <!-- 表名 -->
+    <sql id="t_name">t_sys_sms</sql>
+    <!-- 别名 -->
+    <sql id="t_alias">t_sys_sms as t</sql>
+
+    <!-- 自定义分页 -->
+    <select id="selectSmsPageList" resultMap="BaseCommonResult">
+        select
+        t.id,
+        t.sms_type_id,
+        t.title,
+        t.content,
+        t.sms_time,
+        t.sms_count,
+        t.interval_time,
+        t.status,
+        t.real_time,
+        t.real_count,
+        t.create_time,
+        t.update_time,
+        t.create_user,
+        t.update_user,
+        t2.type_name
+        from
+        <include refid="t_alias"/>
+        inner join t_sys_sms_type t2 on t2.id =t.sms_type_id
+        ${ew.customSqlSegment}
+    </select>
+
+    <!-- 获取待推送消息 -->
+    <select id="selectCurrentSmsList" resultMap="BaseCommonResult">
+        SELECT
+        t.id,
+        t.sms_type_id,
+        t.title,
+        t.content,
+        t.sms_time,
+        t.sms_count,
+        t.interval_time,
+        t.`status`,
+        t.real_time,
+        t.real_count,
+        t.create_time,
+        t.update_time,
+        t.create_user,
+        t.update_user
+        FROM
+        t_sys_sms t
+        where
+        t.status=0
+        and t.sms_count !=''
+        and t.interval_time !=''
+        and t.sms_type_id not in (1,2)
+        <![CDATA[and t.sms_time<=now()
+        ]]>
+    </select>
+
+</mapper>

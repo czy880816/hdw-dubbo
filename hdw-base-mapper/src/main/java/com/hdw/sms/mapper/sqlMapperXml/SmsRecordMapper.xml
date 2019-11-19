@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hdw.sms.mapper.SmsRecordMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseCommonResult" type="com.hdw.sms.entity.SmsRecord">
+        <result column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="sms_id" property="smsId"/>
+        <result column="sms_time" property="smsTime"/>
+        <result column="push_time" property="pushTime"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
+    <!-- 表名 -->
+    <sql id="t_name">t_sys_sms_record</sql>
+    <!-- 别名 -->
+    <sql id="t_alias">t_sys_sms_record as t</sql>
+
+    <!-- 自定义分页 -->
+    <select id="selectSmsRecordPageList" resultType="com.hdw.sms.entity.SmsRecord">
+        select
+        t.id,
+        t.user_id as userId,
+        t.sms_id as smsId,
+        t.sms_time as smsTime,
+        t.push_time as pushTime,
+        t.status,
+        t2.title,
+        t2.content,
+        t3.name as userName
+        from
+        <include refid="t_alias"/>
+        inner join t_sys_sms t2 on t2.id=t.sms_id
+        inner join t_sys_user t3 on t3.id=t.user_id
+        ${ew.customSqlSegment}
+    </select>
+
+
+    <!-- 最近5条未读消息 -->
+    <select id="findRecent5Messages" resultType="com.hdw.sms.entity.SmsRecord">
+        SELECT
+        t.id,
+        t.user_id AS userId,
+        t.sms_id AS smsId,
+        t.sms_time AS smsTime,
+        t.push_time AS pushTime,
+        t.`status`,
+        t2.title,
+        t2.content,
+        t3.name AS userName,
+        <![CDATA[(
+        CASE
+        WHEN (UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(t.push_time)) / (60 * 60 * 24) > 1
+        THEN
+        CONCAT(FLOOR((UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(t.push_time)) / (60 * 60 * 24)),'天前')
+        WHEN ((UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(t.push_time)) / (60 * 60) >= 1
+        AND (UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(t.push_time)) / (60 * 60 * 24) <= 1)
+        THEN
+        CONCAT(FLOOR((UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(t.push_time)) / (60 * 60)),'小时前')
+        WHEN ((UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(t.push_time)) / (60 * 60) < 1
+        AND (UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(t.push_time)) / 60 >= 1)
+        THEN
+        CONCAT(FLOOR((UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(t.push_time)) / 60),'分前')
+        WHEN ((UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(t.push_time)) / 60 < 1
+        AND (UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(t.push_time)) >= 1)
+        THEN
+        CONCAT(FLOOR(UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(t.push_time)),'秒前')
+        WHEN ((UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(t.push_time)) < 1
+        AND (UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(t.push_time)) >= 0)
+        THEN
+        '1秒前'
+        ELSE '最近' END
+        ) AS timeStr]]>
+        FROM
+        t_sys_sms_record t
+        INNER JOIN t_sys_sms t2 ON t2.id=t.sms_id
+        INNER JOIN t_sys_user t3 ON t3.id = t.user_id
+        WHERE
+        <![CDATA[t.`status` <> 0 and t.`status` <> 3]]>
+        <if test="userId!=null and userId!=''">
+            AND t.user_id=${userId}
+        </if>
+        ORDER BY
+        t.push_time DESC
+        LIMIT 0,5
+    </select>
+
+
+</mapper>
